@@ -97,7 +97,7 @@ public class SeleniumWC {
 			}
 			driver.close();
 		}
-		System.out.println("Found " + results + " results. Ending program...");
+		System.out.println("\nFound " + results + " results. Ending program...");
 		sc.close();
 	}
 
