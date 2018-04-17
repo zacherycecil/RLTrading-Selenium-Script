@@ -13,8 +13,10 @@ import org.openqa.selenium.chrome.ChromeDriver;
 public class SeleniumWC {
 	public static void main(String[] args) throws InterruptedException {
 		int results = 0;
-		boolean change = false;
+		boolean title = false;
+		boolean body = false;
 		boolean none = true;
+		String titleName = "";
 		Scanner sc = new Scanner(System.in);
 		System.out.print("Enter keywords (type done when finished or clear to clear keywords): ");
 		ArrayList<String> ar = new ArrayList<String>();
@@ -45,51 +47,51 @@ public class SeleniumWC {
 					if (i == 1 && x == 0) {
 						x = 2;
 					}
-					change = false;
+					title = false;
+					body = false;
+					String bodyString = "";
 					WebElement table = driver.findElement(By.className("forum_topics"));
 					List<WebElement> rows = table.findElements(By.className("forum_topic_name"));
 					List<WebElement> clickableRow = table.findElements(By.className("forum_topic_overlay"));
+					titleName = rows.get(x).getText();
+					// NAVIGATE TO PAGE
+					clickableRow.get(x).click();
+					String content[] = driver.findElements(By.className("content")).get(4).getText()
+							.split("\\r?\\n");
+					
 					for (int j = 0; j < ar.size(); j++) {
-						if (rows.get(x).getText().toLowerCase().contains(ar.get(j).toLowerCase())) {
-							results++;
-							System.out.println("\nSteam User | "
-									+ driver.findElements(By.className("forum_topic_op")).get(x).getText());
-							System.out.println("Link to Post | " 
-									+ clickableRow.get(x).getAttribute("href"));
-							System.out.println("Last Post on Thread | " + driver
-									.findElements(By.className("forum_topic_lastpost")).get(x).getText());
-							System.out.println("Page " + i + " | Row " + (x + 1) + " | " + rows.get(x).getText());
-							change = true;
+						for (int y = 0; y < content.length; y++) {
+							if (content[y].toLowerCase().contains(ar.get(j).toLowerCase())) {
+								bodyString +=
+										"Body (ln " + (y + 1) + ")";
+								for (int len = ((y + 1) + "").length(); len < 4; len++) {
+									bodyString += " ";
+								}
+								bodyString += 
+										"| " + content[y] + "\n";
+								none = false;
+								title = true;
+							}
+						}
+						if (!title && titleName.toLowerCase().contains(ar.get(j).toLowerCase())) {
+							title = true;
 							none = false;
 						}
 					}
-					if (!change) {
-						clickableRow.get(x).click();
-						String content[] = driver.findElements(By.className("content")).get(4).getText()
-								.split("\\r?\\n");
-						for (int j = 0; j < ar.size(); j++) {
-							for (int y = 0; y < content.length; y++) {
-								if (content[y].toLowerCase().contains(ar.get(j).toLowerCase())) {
-									results++;
-									if (!change) {
-										System.out.println("\nSteam User | " + driver
-												.findElement(By.className("forum_op_author")).getText());
-										System.out.println("Link to User | " 
-												+ driver.findElement(By.className("forum_op_author")).getAttribute("href"));
-										System.out.println("Link to Post | " 
-												+ driver.getCurrentUrl());
-										System.out.println("Thread Posted | "
-												+ driver.findElement(By.className("date")).getAttribute("title"));
-									}
-									System.out.println(
-											"Page " + i + " | Row " + (x + 1) + " | Page Line " + (y + 1) + " | " + content[y]);
-									none = false;
-									change = true;
-								}
-							}
-						}
-						driver.get(mainPageURL);
+					if (title) {
+						System.out.println("\nSteam User    | " + driver
+								.findElement(By.className("forum_op_author")).getText());
+						System.out.println("Link to User  | " 
+								+ driver.findElement(By.className("forum_op_author")).getAttribute("href"));
+						System.out.println("Link to Post  | " 
+								+ driver.getCurrentUrl());
+						System.out.println("Thread Posted | "
+								+ driver.findElement(By.className("date")).getAttribute("title"));
+						System.out.println("Title         | " + titleName);
+						System.out.print(bodyString);
+						results++;
 					}
+					driver.get(mainPageURL);
 				}
 				if (none) {
 					System.out.println("<none>");
