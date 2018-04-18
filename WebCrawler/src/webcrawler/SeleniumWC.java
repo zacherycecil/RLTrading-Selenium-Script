@@ -14,7 +14,6 @@ public class SeleniumWC {
 	public static void main(String[] args) throws InterruptedException {
 		int results = 0;
 		boolean title = false;
-		boolean body = false;
 		boolean none = true;
 		String titleName = "";
 		Scanner sc = new Scanner(System.in);
@@ -48,7 +47,6 @@ public class SeleniumWC {
 						x = 2;
 					}
 					title = false;
-					body = false;
 					String bodyString = "";
 					WebElement table = driver.findElement(By.className("forum_topics"));
 					List<WebElement> rows = table.findElements(By.className("forum_topic_name"));
